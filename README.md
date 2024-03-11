@@ -106,16 +106,21 @@ https://github.com/nicslabdev/HackerWeekX-Web3-workshop.git
 
 # Abrimos la carpeta creada
 cd HackerWeekX-Web3-workshop
-
-# Instalamos las dependencias
-forge install foundry-rs/forge-std --no-commit
 ```
 
 Deberiamos de ver algo así:
 
 ![Screenshot_01](/resources/Screenshot_01.png)
 
-Podemos comprobar que todo está correcto ejecutando `forge build`, lo cual compilará  el contrato inteligente que vamos a utilizar en el taller. 
+A continuación instalaremos las dependencias y compilaremos el proyecto para comprobar que todo está correcto.
+  
+```shell
+# Instalamos las dependencias
+forge install foundry-rs/forge-std --no-commit
+
+# Compilamos el proyecto
+forge build
+```
 
 Deberiamos de obtener el siguiente resultado:
 
