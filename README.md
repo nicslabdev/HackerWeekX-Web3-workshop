@@ -108,7 +108,7 @@ https://github.com/nicslabdev/HackerWeekX-Web3-workshop.git
 cd HackerWeekX-Web3-workshop
 ```
 
-Deberiamos de ver algo así:
+Deberíamos de ver algo así:
 
 ![Screenshot_01](/resources/Screenshot_01.png)
 
@@ -122,7 +122,7 @@ forge install foundry-rs/forge-std --no-commit
 forge build
 ```
 
-Deberiamos de obtener el siguiente resultado:
+Deberíamos de obtener el siguiente resultado:
 
 ![Screenshot_02](/resources/Screenshot_02.png)
 
@@ -247,7 +247,7 @@ Como podemos observar, en Foundry los tests también están escritos en solidity
 > - Usamos los modifier para modificar el comportamiento de otras funciones. En este caso, el modifier `doSomethingBefore()` modifica el comportamiento de la función `testAnotherFunction()`, de forma que se ejecuta el contenido del modifier antes que el de la función.
 > - La función setUp es especial, se ejecuta antes de cada test, y nos permite inicializar las variables que vamos a utilizar en ellos.
 
-Dicho esto, vamos a ejecutar los tests para comprobar que el contrato funciona correctamente. Para ello, ejecutamos `forge test --match-contract Crowdfund` en la terminal. Deberiamos de obtener el siguiente resultado:
+Dicho esto, vamos a ejecutar los tests para comprobar que el contrato funciona correctamente. Para ello, ejecutamos `forge test --match-contract Crowdfund` en la terminal. Deberíamos de obtener el siguiente resultado:
 
 ![Screenshot_03](/resources/Screenshot_03.png)
 
@@ -500,7 +500,7 @@ Tal y como hemos comentado, el *exploit* consiste en realizar tres stakes, de 10
 
 Para ejecutar el test escribimos lo siguiente en la terminal: `forge test --match-contract ProofOfConcept -vv`. El flag `-vv` nos permite activar la *verbosidad*, que nos mostrará los `console.log` que hemos añadido al test.
 
-Deberiamos de obtener el siguiente resultado:
+Deberíamos de obtener el siguiente resultado:
 
 ![Screenshot_14](/resources/Screenshot_14.png)
 
