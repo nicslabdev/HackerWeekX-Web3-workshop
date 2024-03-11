@@ -69,18 +69,21 @@ La forma recomendada de instalarlo es mediante la herramienta **foundryup**. A c
 
 En la terminal ejecuta:
 
-```shell
+```Powershell
 curl -L https://foundry.paradigm.xyz | bash
 ```
 
 Como resultado obtendrás algo parecido a esto:
 
-```consoleDetected your preferred shell is bashrc and added Foundry to Path run:source /home/user/.bashrcStart a new terminal session to use Foundry`
+```shell
+consoleDetected your preferred shell is bashrc and added Foundry to Path run:source /home/user/.bashrcStart a new terminal session to use Foundry
+```
 
 Ahora simplemente escribe `foundryup` en la terminal y pulsa `Enter`. Esto instalará los cuatro componentes de Foundry: *forge*, *cast*, *anvil* y *chisel*.
 
 Para confimar la correcta instalación escribe `forge --version`. Deberías de obtener la versión instalada de forge:
-```shell
+
+```shell 
 Forge version x.x.x
 ```
 
