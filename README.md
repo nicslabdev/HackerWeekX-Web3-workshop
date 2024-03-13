@@ -401,9 +401,9 @@ Una de las *red flags* que nos debería de llamar la atención es que el contrat
 
 Esto nos deja con una pista muy clara de por dónde buscar. Recordemos nuestro objetivo principal, obtener el control del contrato, es decir, **ganar el perfil de owner**.
 
-Para ello, debemos de buscar una forma de que `stakes[msg.sender] == 1`- siendo nosotros msg.sender. Como sabemos que en esta versión de Solidity no se realizan comprobaciones de desbordamiento, podemos intentar realizar una suma que desborde el rango del entero, y así obtener el control del contrato.
+Para ello, debemos de buscar una forma de que `stakes[msg.sender] == 1` - siendo nosotros msg.sender. Como sabemos que en esta versión de Solidity no se realizan comprobaciones de desbordamiento, podemos intentar realizar una suma que desborde el rango del entero, y así obtener el control del contrato.
 
-El mapping `stakes` es un mapeo de direcciones a enteros de 256 bits -> [0, 255]. Por lo que si hacemos un stake de 257 finney, el resultado será 1, pues 257 % 256 = 1.
+El mapping `stakes` es un mapeo de `address` a `uint8` - enteros de 8 bits, lo que significa que puede almacenar valores en el rango de [0, 255]. Si realizamos un stake de 257 finney, se producirá un desbordamiento de valor ya que 257 % 256 es igual a 1.
 
 Pero no cometamos el mismo error que antes, ya sabemos que las inversiones deben de ser mayores que 2 finney y menores o iguales que 100. Por lo que no podemos hacer un stake de 257 finney. Debemos de hacerlo en, como mínimo, tres transacciones. 
 
